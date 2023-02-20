@@ -10,41 +10,47 @@ import com.servico.backservico.repository.ServicoRepository;
 
 @Service
 public class ServicoService {
-    @Autowired
-    private ServicoRepository repository;
+  @Autowired
+  private ServicoRepository repository;
 
-    public List<Servico> buscarTodos() {
-        return repository.findAll();
-    }
+  public List<Servico> buscarTodos() {
+    return repository.findAll();
+  }
 
-    public List<Servico> buscarServicosPagamentosPedentesList() {
-        return repository.buscarSerivcosPagamentoPedente();
-    }
+  public List<Servico> buscarServicosPagamentosPedentesList() {
+    return repository.buscarSerivcosPagamentoPedente();
+  }
 
-    public List<Servico> buscarServicosCanceladosList() {
-        return repository.buscarSerivcosCancelados();
-    }
+  public List<Servico> buscarServicosCanceladosList() {
+    return repository.buscarSerivcosCancelados();
+  }
 
-    public Servico inserir(Servico servico) {
-        if (servico.getValorPago() == null || servico.getValorPago() == 0 || servico.getDataPagamento() == null) {
-            servico.setStatus("pendente");
-        } else {
-            servico.setStatus("realizado");
-        }
-        Servico objt = repository.saveAndFlush(servico);
-        return objt;
+  public Servico inserir(Servico servico) {
+    if (servico.getValorPago() == null || servico.getValorPago() == 0 || servico.getDataPagamento() == null) {
+      servico.setStatus("pendente");
+    } else {
+      servico.setStatus("realizado");
     }
+    Servico objt = repository.saveAndFlush(servico);
+    return objt;
+  }
 
-    public Servico atualizar(Servico servico) {
-        if (servico.getValorPago() != null && servico.getValorPago() > 0 && servico.getDataPagamento() != null) {
-            servico.setStatus("realizado");
-        }else{
-            servico.setStatus("cancelado");
-        }
-        return repository.saveAndFlush(servico);
+  public Servico atualizar(Servico servico) {
+    if (servico.getValorPago() != null && servico.getValorPago() > 0 && servico.getDataPagamento() != null) {
+      servico.setStatus("realizado");
+    } else {
+      servico.setStatus("pendente");
     }
+    return repository.saveAndFlush(servico);
+  }
 
-    public void remover(long id){
-        repository.deleteById(id);
-    }
+  public Servico cancelarServico(long id) {
+    Servico servico = repository.findById(id).get();
+    servico.setStatus("cancelado");
+    return repository.saveAndFlush(servico);
+  }
+
+  public void remover(long id) {
+    repository.deleteById(id);
+  }
 }
